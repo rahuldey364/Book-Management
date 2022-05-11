@@ -14,9 +14,14 @@ const isValidString= function (value) {
     return true
 }
 
-const isValidNumber = function (number) {
-    if (typeof number === NaN || number === 0  ) return false;
-    return true
+
+const isValidNumber=  function(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
+const isValidISBN= function(ISBN){
+    let pattern1 = /^[\d*\-]{10}|[\d*\-]{13}$/                                                                          // ISBN validation
+    if (pattern1.test(ISBN))  return true 
 }
 
 const isValidRequestBody = function (requestbody) {
@@ -27,5 +32,5 @@ const isValidObjectId = function (ObjectId) {
     return mongoose.Types.ObjectId.isValid(ObjectId)
 }
 
-module.exports = { isValid , isValidString, isValidNumber, isValidRequestBody, isValidObjectId }
+module.exports = { isValid , isValidString, isValidNumber, isValidRequestBody, isValidObjectId ,isValidISBN}
 

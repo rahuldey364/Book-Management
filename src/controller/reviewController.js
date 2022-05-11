@@ -98,24 +98,34 @@ const updateReview = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Name is not Valid" })
         }
 
-        let check = await reviewModel.findById({ _id: bookId, isDeleted: false })
+        let check = await booksModel.findOne({ _id: bookId})
         if (!check) return res.status(400).send({ status: false, msg: "Books not found" })
+        // if (!check) return res.status(400).send({ status: false, msg: "Books not found" })
+        let checking = check.isDeleted
+        if (checking == true) return res.status(404).send({ status: false, msg: "Already deleted" })
+        if (checking == false){
 
-        let updatedReview = await reviewModel.findOneAndUpdate({ _id: reviewId }, {
+        let updatedReviews = await reviewModel.findByIdAndUpdate({ _id: reviewId }, {
             $set: {
                 review: data.review,
                 rating: data.rating,
                 reviewedBy: data.reviewedBy
             }
-        }, { new: true, upsert: true })
+        }, { new: true })
 
-        if (updatedReview.length == 0) {
+        if (updatedReviews == null) {
 
             return res.status(404).send({ status: false, msg: "Invalid Request" })
         }
         else {
-            res.status(200).send({ status: true, data: updatedReview })
+            let newReview = await booksModel.findOneAndUpdate({ _id: bookId }, {
+                $inc: {
+                    reviews: 1
+                }
+            }, { new: true, upsert: true })
+            res.status(200).send({ status: true, data: updatedReviews })
         }
+    }
     }
     catch (err) {
         console.log(err)
