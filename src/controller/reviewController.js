@@ -98,34 +98,36 @@ const updateReview = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Name is not Valid" })
         }
 
-        let check = await booksModel.findOne({ _id: bookId})
+        let check = await booksModel.findOne({ _id: bookId })
         if (!check) return res.status(400).send({ status: false, msg: "Books not found" })
         // if (!check) return res.status(400).send({ status: false, msg: "Books not found" })
-        let checking = check.isDeleted
-        if (checking == true) return res.status(404).send({ status: false, msg: "Already deleted" })
-        if (checking == false){
+        // let checking = check.isDeleted
+        // if (checking == true) return res.status(404).send({ status: false, msg: "Already deleted" })
+        // if (checking == false){
 
-        let updatedReviews = await reviewModel.findByIdAndUpdate({ _id: reviewId }, {
+        let updatedReviews = await reviewModel.findOneAndUpdate({ _id: reviewId ,isDeleted : false}, {
             $set: {
                 review: data.review,
                 rating: data.rating,
                 reviewedBy: data.reviewedBy
             }
-        }, { new: true })
+        }, { new: true }).lean()                       
 
-        if (updatedReviews == null) {
+        delete updatedReviews.isDeleted
 
-            return res.status(404).send({ status: false, msg: "Invalid Request" })
+        if (!updatedReviews) {
+
+            return res.status(404).send({ status: false, msg: "Invalid Request " })
         }
-        else {
+        
             let newReview = await booksModel.findOneAndUpdate({ _id: bookId }, {
                 $inc: {
                     reviews: 1
                 }
             }, { new: true, upsert: true })
             res.status(200).send({ status: true, data: updatedReviews })
-        }
-    }
+        
+    
     }
     catch (err) {
         console.log(err)
@@ -184,6 +186,7 @@ const deleteBooksbyId = async function (req, res) {
 }
 
 module.exports = {createReview,updateReview,deleteBooksbyId }
+
 
 
 

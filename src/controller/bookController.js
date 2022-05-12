@@ -116,24 +116,13 @@ let createBook = async function (req, res) {
 const getBooks = async function (req, res) {
     try {
         let data = req.query
-        let filter = {...data}
-
-    
-        let getBooks = await booksModel.find({ isDeleted: false, ...data }).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
+       let getBooks = await booksModel.find({ isDeleted: false, ...data }).sort({title : 1}).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
         if (!getBooks) {
             return req.status(404).send({ status: false, msg: "Documents not found" })
         }
-        else  {
-            let arranged = getBooks.sort(function (a, b) {
-                if (a.title.toLowerCase() < b.title.toLowerCase()) return -1;
-                if (a.title.toLowerCase() > b.title.toLowerCase()) return 1;
-                return 0;
-            })
-            return res.status(200).send({ status: true, msg: "list of books", data: arranged })   }
-        // } else {
-        //     return res.status(400).send({status : false , message : "Invalid request Query "})
-        // }
-    }
+                   return res.status(200).send({ status: true, msg: "list of books", data: getBooks })   }
+       
+    
     catch (err) {
         console.log(err)
         res.status(500).send({ status: false, msg: "error", err: err.message })
@@ -241,7 +230,7 @@ const updateBooks = async function (req, res) {
                 ISBN: data.ISBN
                 // name : data.name
             }
-        }, { new: true})      // upsert = update and insert (optional in this case)
+        }, { new: true}) // upsert = update and insert (optional in this case)
 
         if (updateBooks == null) {       //
             return res.status(404).send({ status: false, msg: "Invalid Request" })
@@ -264,32 +253,52 @@ const updateBooks = async function (req, res) {
 // Check if the bookId exists and is not deleted. If it does, mark it deleted and return an HTTP status 200 with a response body with status and message.
 // If the book document doesn't exist then return an HTTP status of 404 with a body like this
 
+// const deleteBooksbyId = async function (req, res) {
+//     try {
+//         const bookId = req.params.bookId
+//         if (!bookId) return res.status(400).send({ status: false, msg: "BookId should be present in params" })
+//         if (!validation.isValidObjectId(bookId)) {
+//             return res.status(404).send({
+//                 status: false,
+//                 message: "you have entered a invalid book id or book is deleted  ",
+//             });
+//         }
+//         let check = await booksModel.findById({ _id: bookId })
+//         if (!check) return res.status(400).send({ status: false, msg: "Books not found" })
+//         let checking = check.isDeleted
+//         if (checking == true) return res.status(404).send({ status: false, msg: "Already deleted" })
+//         if (checking == false) {
+//             let deleteBook = await booksModel.findByIdAndUpdate({ _id: bookId },
+//                 { $set: { isDeleted: true, deletedAt: new Date() } },
+//                 { new: true, upsert: true })                                                        // we can change new Date() to moment().format()
+//             res.status(200).send({ status: true, msg: "book is deleted successfully" });
+//         }
+//     }
+//     catch (err) {
+//         console.log(err)
+//         res.status(500).send({ status: false, msg: "error", err: err.message })
+//     }
+// }
+
 const deleteBooksbyId = async function (req, res) {
     try {
-        const bookId = req.params.bookId
-        if (!bookId) return res.status(400).send({ status: false, msg: "BookId should be present in params" })
-        if (!validation.isValidObjectId(bookId)) {
-            return res.status(404).send({
-                status: false,
-                message: "you have entered a invalid book id or book is deleted  ",
-            });
-        }
-        let check = await booksModel.findById({ _id: bookId })
-        if (!check) return res.status(400).send({ status: false, msg: "Books not found" })
-        let checking = check.isDeleted
-        if (checking == true) return res.status(404).send({ status: false, msg: "Already deleted" })
-        if (checking == false) {
-            let deleteBook = await booksModel.findByIdAndUpdate({ _id: bookId },
-                { $set: { isDeleted: true, deletedAt: new Date() } },
-                { new: true, upsert: true })                                                        // we can change new Date() to moment().format()
-            res.status(200).send({ status: true, msg: "book is deleted successfully" });
-        }
+      const bookId = req.params.bookId
+      console.log(bookId)
+      if (!bookId) return res.status(400).send({ status: false, msg: "BookId should be present in params" })
+      let check = await booksModel.findOne({ _id: bookId,isDeleted:true })
+      
+      if (check) return res.status(404).send({ status: false, msg: "Already deleted" })
+      
+        let deleteBlog = await booksModel.findOneAndUpdate({ _id: bookId, isDeleted : false}, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true, upsert: true }) // we can change new Date() to moment().format()
+        console.log(deleteBlog)
+        if (!deleteBlog)return res.status(404).send({ status: false, msg: "no such book exist" })
+        res.status(200).send({ status: true, msg: "book is deleted successfully" })
     }
     catch (err) {
-        console.log(err)
-        res.status(500).send({ status: false, msg: "error", err: err.message })
+      console.log(err)
+      res.status(500).send({ status: false, msg: "error", err: err.message })
     }
-}
+  }
 
 module.exports = { createBook, getBooks, getBookById, updateBooks, deleteBooksbyId }
 
