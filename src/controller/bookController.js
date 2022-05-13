@@ -235,9 +235,8 @@ const updateBooks = async function (req, res) {
         if (updateBooks == null) {       //
             return res.status(404).send({ status: false, msg: "Invalid Request" })
         }
-        else {
-            res.status(200).send({ status: true, data: updateBooks })
-        }
+        res.status(200).send({ status: true, data: updateBooks })
+        
     }
     catch (err) {
         console.log(err)

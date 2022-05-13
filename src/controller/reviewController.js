@@ -15,10 +15,10 @@ const createReview = async function (req, res) {
     try {
         let bookId = req.params.bookId
         if (!bookId) return res.status(400).send({ status: false, msg: "Bad Request, please provide BookId in params" })
-        let check = await booksModel.findById({ _id: bookId, isDeleted: false })
+        let check = await booksModel.findOne({ _id: bookId, isDeleted: false })
         if (!check) {
             return res.status(404).send({ status: false, message: "No book found" })
-        } else {
+        } 
             let data = req.body
             let { review, rating, reviewedBy } = data
 
@@ -48,7 +48,7 @@ const createReview = async function (req, res) {
             
             let savedData = await reviewModel.create(data)
             return res.status(201).send({ status: true, data: savedData })
-        }
+        
     }
     catch (err) {
         console.log(err)
@@ -99,15 +99,14 @@ const updateReview = async function (req, res) {
         if (!validation.isValid(data.reviewedBy)) {
             return res.status(400).send({ status: false, msg: "Name is not Valid" })
         }
+        
+
   
       let check = await booksModel.findOne({ _id: bookId, isDeleted: false });
       if (!check)
         return res.status(400).send({ status: false, msg: "Books not found" });
-      // let check1= await reviewModel.findOne({_id:reviewId,isDeleted:false})
-      // if (!check1)
-      //   return res.status(400).send({ status: false, msg: "reviews not found" });
       let updatedReview = await reviewModel.findOneAndUpdate(
-        { _id: reviewId ,isDeleted:false},
+        { _id: reviewId , bookId : bookId,isDeleted:false},
         {
           $set: {
             review: data.review,
@@ -116,7 +115,7 @@ const updateReview = async function (req, res) {
           },
         },
         { new: true }
-      ).lean()
+      ).lean()                                       //With the Mongoose lean() method, the documents are returned as plain objects.
       delete updateReview.isDeleted
       if (!updatedReview) {
         return res.status(404).send({ status: false, msg: "Invalid Request" });
@@ -153,23 +152,19 @@ const deleteBooksbyId = async function (req, res) {
                 msg: "not a valid userId"
             })
         }
-        let check = await booksModel.findById({ _id: bookId })
-        let checking = check.isDeleted
-        if (checking == true) return res.status(404).send({ status: false, msg: "Book is already deleted , no review is available" })
-        if (checking == false) {
-
-            let deleteReview = await booksModel.findOneAndUpdate({ _id: bookId }, {
+              let deleteReview = await booksModel.findOneAndUpdate({ _id: bookId , isDeleted : false}, {
                 $inc: {
                     reviews: - 1
                 }
-            }, { new: true, upsert: true })
+            }, { new: true })
 
-            let updateReview = await reviewModel.findOneAndUpdate({ _id: reviewId }, { 
+            let updateReview = await reviewModel.findOneAndUpdate({ _id: reviewId ,bookId : bookId, isDeleted : false}, { 
                 $set : {
                     isDeleted : true
-                }}, { new: true, upsert: true })
-            
-        }
+                }}, { new: true})
+
+                if(!updateReview) return res.status(404).send({status : false , message : "Invalid request : Please enter correct bookId or reviewId"})
+                res.status(200).send({ status: true, msg: "review is deleted successfully" })
         
     }
     catch (err) {
