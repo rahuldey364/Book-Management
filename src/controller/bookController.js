@@ -80,7 +80,6 @@ let createBook = async function (req, res) {
         let check = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
         if (releasedAt) {
             if (!check.test(releasedAt)) {
-                // need to solve this later
                 return res
                     .status(409)
                     .send({ status: false, msg: " date must be in yyyy-mm-dd" });
