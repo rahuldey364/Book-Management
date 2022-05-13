@@ -114,12 +114,21 @@ let createBook = async function (req, res) {
 
 const getBooks = async function (req, res) {
     try {
-        let data = req.query
+        var data = req.query
+        let Filter = { ...data}
        let getBooks = await booksModel.find({ isDeleted: false, ...data }).sort({title : 1}).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
         if (!getBooks) {
             return req.status(404).send({ status: false, msg: "Documents not found" })
         }
-                   return res.status(200).send({ status: true, msg: "list of books", data: getBooks })   }
+        
+        // if(Filter === getBooks[Filter]){
+        //     let validQuery = getBooks[Filter]
+        //     if(!validQuery) return res.status(400).send({ status : false , message : "Invalid query"})
+        // }
+        
+        
+        
+        return res.status(200).send({ status: true, msg: "list of books", data: getBooks })   }
        
     
     catch (err) {
@@ -155,7 +164,7 @@ const getBookById = async function (req, res) {
                 message: "you have entered a invalid book id or book is deleted  ",
             });
         }
-        const isValidBook = await booksModel.findOne({ _id: bookId, isDeleted: false }).lean();    //With the Mongoose lean() method, the documents are returned as plain objects.
+        const isValidBook = await booksModel.findOne({ _id: bookId, isDeleted: false }).select({deletedAt:0,__v:0 , ISBN: 0}).lean();    //With the Mongoose lean() method, the documents are returned as plain objects.
         if (!isValidBook) {
             return res.status(404).send({
                 status: false,
@@ -164,7 +173,7 @@ const getBookById = async function (req, res) {
         }
         const getReviews = await reviewModel.find({ bookId: bookId, isDeleted: false })
 
-        delete isValidBook.ISBN
+        // delete isValidBook.ISBN
         isValidBook.reviewsData = getReviews
         res.status(200).send({ status: true, data: isValidBook });
     }
@@ -227,9 +236,9 @@ const updateBooks = async function (req, res) {
                 excerpt: data.excerpt,
                 releasedAt: data.releasedAt,
                 ISBN: data.ISBN
-                // name : data.name
+            
             }
-        }, { new: true}) // upsert = update and insert (optional in this case)
+        }, { new: true}).select({deletedAt:0,__v:0}) // upsert = update and insert (optional in this case)
 
         if (updateBooks == null) {       //
             return res.status(404).send({ status: false, msg: "Invalid Request" })
@@ -299,4 +308,6 @@ const deleteBooksbyId = async function (req, res) {
   }
 
 module.exports = { createBook, getBooks, getBookById, updateBooks, deleteBooksbyId }
+
+
 

@@ -102,7 +102,7 @@ const updateReview = async function (req, res) {
         
 
   
-      let check = await booksModel.findOne({ _id: bookId, isDeleted: false });
+      let check = await booksModel.findOne({ _id: bookId, isDeleted: false }).select({deletedAt:0,__v:0, ISBN : 0}).lean();     //With the Mongoose lean() method, the documents are returned as plain objects.
       if (!check)
         return res.status(400).send({ status: false, msg: "Books not found" });
       let updatedReview = await reviewModel.findOneAndUpdate(
@@ -113,14 +113,16 @@ const updateReview = async function (req, res) {
             rating: data.rating,
             reviewedBy: data.reviewedBy,
           },
-        },
-        { new: true }
-      ).lean()                                       //With the Mongoose lean() method, the documents are returned as plain objects.
-      delete updateReview.isDeleted
-      if (!updatedReview) {
-        return res.status(404).send({ status: false, msg: "Invalid Request" });
-      } 
-        res.status(200).send({ status: true, data: updatedReview });
+        })                                       //With the Mongoose lean() method, the documents are returned as plain objects.
+ 
+    const getReviews = await reviewModel.find({ bookId: bookId, isDeleted: false }).select({isDeleted:0})
+
+    // delete check.ISBN
+    check.reviewsData = getReviews
+    res.status(200).send({ status: true, data: check });
+
+
+        // res.status(200).send({ status: true, data:updateReview });
       
     } catch (err) {
       console.log(err);
