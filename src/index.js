@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended : true }));
 mongoose.connect("mongodb+srv://disha123:hl6LMcJIED1eCZhr@cluster0.hrerz.mongodb.net/project3", {
     useNewUrlParser: true
 })
-.then( () => console.log("MongoDb is connected"))
+.then( () => console.log("MongoDb is connected"))   // it passes the function when the promises gets resolved
 .catch ( err => console.log(err) )
 
 // app.use (
@@ -20,7 +20,7 @@ mongoose.connect("mongodb+srv://disha123:hl6LMcJIED1eCZhr@cluster0.hrerz.mongodb
 //         next();
 //   }
 //   );
-
+// console.log(5)
 app.use('/', route);
 
 

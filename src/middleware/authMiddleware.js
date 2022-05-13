@@ -18,7 +18,7 @@ const authentication = (req, res, next) => {
   
         return res.status(401).send({ status: false, msg: "Token must be present" });
       }
-      let decodedToken = jwt.verify(token, "functionUp");              //verifying token with secret key
+      let decodedToken = jwt.verify(token, "function1Up");              //verifying token with secret key
   
   
     //   if (!decodedToken) return res.status(401).send({ status: false, msg: "Token is incorrect" });  // mark this

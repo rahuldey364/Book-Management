@@ -223,12 +223,16 @@ const updateBooks = async function (req, res) {
         let uniqueTitle = await booksModel.findOne({ title: data.title })
         if (uniqueTitle) return res.status(409).send({ status: false, msg: " title already exists" })
 
-
-        if (!validation.isValidISBN(data.ISBN)) {
-            return res.status(400).send({ status: false, msg: "Invalid ISBN" });
-        }
-        let uniqueISBN = await booksModel.findOne({ ISBN: data.ISBN })
-        if (uniqueISBN) return res.status(409).send({ status: false, msg: " ISBN already exists" })
+        if(data.ISBN){
+            if (!validation.isValidISBN(data.ISBN)) {
+           return res.status(400).send({ status: false, msg: "ISBN is not Valid" })
+       }
+   }
+        // if (!validation.isValidISBN(data.ISBN)) {
+        //     return res.status(400).send({ status: false, msg: "Invalid ISBN" });
+        // }
+        // let uniqueISBN = await booksModel.findOne({ ISBN: data.ISBN })
+        // if (uniqueISBN) return res.status(409).send({ status: false, msg: " ISBN already exists" })
 
         let updateBooks = await booksModel.findOneAndUpdate({ _id: bookId }, {
             $set: {
