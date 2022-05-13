@@ -23,7 +23,7 @@ let createBook = async function (req, res) {
 
         let { title, excerpt, userId, ISBN, category, subcategory, isDeleted, reviews, releasedAt } = req.body   // destructuring method 
 
-        // if (isDeleted) { if (isDeleted == true) { return res.status(400).send({ status: false, message: "data is not vailid" }) } }         // Imp condition to check
+        if (isDeleted) { if (isDeleted == true) { return res.status(400).send({ status: false, message: "data is not vailid" }) } }         // Imp condition to check
 
         if (!validation.isValid(title)) {                                                                                 // title validation
             return res.status(400).send({ status: false, message: "title is required and it should be valid" })

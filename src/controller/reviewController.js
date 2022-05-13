@@ -29,10 +29,10 @@ const createReview = async function (req, res) {
             if (!validation.isValidString(review)) {
                 return res.status(400).send({ status: false, msg: "Not a valid review" })
             }
-
+            if(reviewedBy){
             if (!validation.isValidString(reviewedBy)) {
                 return res.status(400).send({ status: false, msg: "Name should be a valid String " })
-            }
+            }}
 
             if(!(rating>=1 && rating<=5)){
                 return res.status(400).send({ status: false, msg: "Rating should be inbetween 1-5 " })
@@ -44,7 +44,7 @@ const createReview = async function (req, res) {
                 $inc: {
                     reviews: 1
                 }
-            }, { new: true, upsert: true })
+            }, { new: true})
             
             let savedData = await reviewModel.create(data)
             return res.status(201).send({ status: true, data: savedData })
