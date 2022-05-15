@@ -10,10 +10,10 @@ console.log(date)
 const bookSchema = new mongoose.Schema({
 
 
-    title: {type: String, required : true , unique : true},
-    excerpt: {type : String, required : true}, 
+    title: {type: String, required : true , unique : true , trim:true},
+    excerpt: {type : String, required : true , trim: true}, 
     userId: { type : ObjectId, required : true, ref : "User"},
-    ISBN: {type:String, required : true, unique : true},
+    ISBN: {type:String, required : true, unique : true ,trim:true},
     category: {type :String, required : true},
     subcategory: {
         type: [String],
@@ -22,7 +22,7 @@ const bookSchema = new mongoose.Schema({
     reviews: {type: Number, default: 0,},      // comment: "Holds number of reviews of this book"},
     deletedAt: {type: Date,   default: null},   
     isDeleted: {type :Boolean, default: false},
-    releasedAt: {type:Date, required : true}
+    releasedAt: {type:String, required : true}
   
 
 },{timestamps : true})

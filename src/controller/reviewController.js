@@ -52,7 +52,10 @@ const createReview = async function (req, res) {
             }, { new: true })
 
         }
-        return res.status(201).send({ status: true, data: savedData })
+        let check1 = await booksModel.findOne({ _id: bookId, isDeleted: false }).select({ deletedAt: 0, __v: 0, ISBN: 0 }).lean()
+        const getReviews = await reviewModel.find({ bookId: bookId, isDeleted: false }).select({ isDeleted: 0 })
+        check1.reviewsData = getReviews
+        return res.status(201).send({ status: true, data: check1 })
 
     }
     catch (err) {

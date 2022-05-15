@@ -8,7 +8,7 @@ const app = express();
 app.use(bodyPaser.json());
 app.use(bodyParser.urlencoded({ extended : true }));
 
-mongoose.connect("mongodb+srv://disha123:hl6LMcJIED1eCZhr@cluster0.hrerz.mongodb.net/project3", {
+mongoose.connect("mongodb+srv://FunctionUp-cohort-1:TENBQZypGNobyoq3@cluster0.7jbgo.mongodb.net/newBook-DB?retryWrites=true&w=majority", {
     useNewUrlParser: true
 })
 .then( () => console.log("MongoDb is connected"))   // it passes the function when the promises gets resolved
