@@ -12,11 +12,11 @@ const validation = require("../validation/validation.js")
 // Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like this
 
 
-
 const createReview = async function (req, res) {
     try {
         let bookId = req.params.bookId
-        let check = await booksModel.findOne({ _id: bookId, isDeleted: false }).select({ deletedAt: 0, __v: 0, ISBN: 0 }).lean()
+        // if (!bookId) return res.status(400).send({ status: false, msg: "Bad Request, please provide BookId in params" })
+        let check = await booksModel.findOne({ _id: bookId, isDeleted: false })
         if (!check) {
             return res.status(404).send({ status: false, message: "No book found" })
         }
@@ -24,23 +24,26 @@ const createReview = async function (req, res) {
         let { review, rating, reviewedBy } = data
 
         if (!validation.isValidRequestBody(data)) {
-            return res.status(400).send({ status: false, message: "please provide  details" })
+            return res.status(400).send({ status: false, msg: "please provide  details" })
         }
 
         if (!validation.isValidString(review)) {
-            return res.status(400).send({ status: false, message: "Not a valid review" })
+            return res.status(400).send({ status: false, msg: "Not a valid review" })
         }
         if (reviewedBy) {
             if (!validation.isValidString(reviewedBy)) {
-                return res.status(400).send({ status: false, message: "Name should be a valid String " })
+                return res.status(400).send({ status: false, msg: "Name should be a valid String " })
             }
         }
 
         if (!(rating >= 1 && rating <= 5)) {
-            return res.status(400).send({ status: false, message: "Rating should be inbetween 1-5 " })
+            return res.status(400).send({ status: false, msg: "Rating should be inbetween 1-5 " })
         }
+
         data.reviewedAt = new Date()
         data.bookId = bookId
+
+
         let savedData = await reviewModel.create(data)
         if (savedData) {
             let newReview = await booksModel.findOneAndUpdate({ _id: bookId }, {
@@ -48,10 +51,13 @@ const createReview = async function (req, res) {
                     reviews: 1
                 }
             }, { new: true })
+
         }
+        let check1 = await booksModel.findOne({ _id: bookId, isDeleted: false }).select({ deletedAt: 0, __v: 0, ISBN: 0 }).lean()
         const getReviews = await reviewModel.find({ bookId: bookId, isDeleted: false }).select({ isDeleted: 0 })
-        check.reviewsData = getReviews
-        return res.status(201).send({ status: true, data: check})
+        check1.reviewsData = getReviews
+        return res.status(201).send({ status: true, data: check1 })
+
     }
     catch (err) {
         console.log(err)
@@ -59,7 +65,6 @@ const createReview = async function (req, res) {
 
     }
 }
-
 
 
 
