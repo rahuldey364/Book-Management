@@ -21,7 +21,7 @@ router.get("/books",Middleware.authentication ,BookController.getBooks)
 
 router.get("/books/:bookId",Middleware.authentication,BookController.getBookById)
 
-router.put("/books/:bookId",Middleware.authentication,Middleware.authorization,BookController.updateBooks)
+router.put("/books/:bookId",BookController.updateBooks)
 
 router.delete("/books/:bookId",Middleware.authentication,Middleware.authorization,BookController.deleteBooksbyId)
 
