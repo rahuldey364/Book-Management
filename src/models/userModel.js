@@ -35,9 +35,9 @@ const userSchema = new mongoose.Schema({
   },
 
   address: {
-    street: String,
-    city: String,
-    pincode: String
+    street: {type :String,trim : true},
+    city: {type :String,trim : true },
+    pincode: {type :String , trim : true}
   },
   
   isDeleted: {
