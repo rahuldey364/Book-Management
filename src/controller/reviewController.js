@@ -101,9 +101,9 @@ const updateReview = async function (req, res) {
         if (!validation.isValidNumber(data.rating)) {
             return res.status(400).send({ status: false, msg: " rating should be number" });
         }
-        if (!validation.isValid(data.reviewedBy)) {
+       if(data.reviewedBy){ if (!validation.isValid(data.reviewedBy)) {
             return res.status(400).send({ status: false, msg: "Name is not Valid" })
-        }
+        }}
 
        let check = await booksModel.findOne({ _id: bookId, isDeleted: false }).select({ deletedAt: 0, __v: 0, ISBN: 0 }).lean();     //With the Mongoose lean() method, the documents are returned as plain objects.
         if (!check)
