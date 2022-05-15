@@ -41,7 +41,7 @@ const authorization = async (req, res, next) => {
   
       token = req.headers["x-api-key"];
   
-      let decodedToken = jwt.verify(token, "functionUp");
+      let decodedToken = jwt.verify(token, "function1Up");
   
       let loggedInUser = decodedToken.userId;
   

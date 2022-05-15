@@ -14,7 +14,6 @@ const isValidString= function (value) {
     return true
 }
 
-
 const isValidNumber=  function(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
