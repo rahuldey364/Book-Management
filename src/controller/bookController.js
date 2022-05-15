@@ -55,7 +55,7 @@ let createBook = async function (req, res) {
         }
 
         let uniqueISBN = await booksModel.findOne({ ISBN: ISBN })                                                          // ISBN uniqueness
-        if (uniqueISBN) return res.status(400).send({ status: false, msg: " ISBN already exists" })
+        if (uniqueISBN) return res.status(409).send({ status: false, msg: " ISBN already exists" })
 
         if (!validation.isValid(category)) {                                                                               // category validation
             return res.status(400).send({ status: false, msg: "category is required" })
