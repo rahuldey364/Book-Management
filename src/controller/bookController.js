@@ -126,7 +126,7 @@ const getBooks = async function (req, res) {
     }
         catch (err) {
         console.log(err)
-        return res.status(500).send({ status: false, msg: "error", err: err.message })
+        res.status(500).send({ status: false, msg: "error", err: err.message })
 
     }
 }
