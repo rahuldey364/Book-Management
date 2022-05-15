@@ -4,6 +4,7 @@ const reviewModel = require("../models/reviewModel")
 const validation = require("../validation/validation")
 // const mongoose = require("mongoose")
 // const moment = require("moment")
+
 // const jwt = require("jsonwebtoken")
 
 
@@ -41,6 +42,13 @@ let createBook = async function (req, res) {
             return res.status(400).send({
                 status: false,
                 message: "valid userId is required"
+            })
+        }
+        let decodedToken= req.decodedToken
+        if(userId!=decodedToken.userId){
+            return res.status(400).send({
+                status: false,
+                message: "you cannot create book with any others userid"
             })
         }
 

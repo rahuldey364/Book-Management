@@ -92,6 +92,11 @@ const userLogIn = async function (req, res) {
 
   if (!data2) { return res.status(400).send({ status: false, message: "password is required" }) }
 
+  let validEmailFormat = await validator.validate(data1);
+    if (!validEmailFormat) {
+      return res.status(400).send({ status: false, msg: "Invalid Email format" });
+    }
+
   let checkData = await userModel.findOne({ email: data1, password: data2 });
 
   if (!checkData) {
@@ -99,9 +104,8 @@ const userLogIn = async function (req, res) {
   }
   else {  
     let token = jwt.sign({ userId: checkData._id }, "function1Up", { expiresIn: '1000s' });
-    let date = new Date()
     // res.setHeader("x-api-key", token);
-    res.status(200).send({ status: true, data: "logged in successfully", token: { token, date } })
+    res.status(200).send({status: true, data: "logged in successfully", token:  token })
   }
 }
 

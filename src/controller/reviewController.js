@@ -134,7 +134,7 @@ const updateReview = async function (req, res) {
 // Delete the related reivew.
 // Update the books document - decrease review count by one
 
-const deleteBooksbyId = async function (req, res) {
+const deleteReviewsbyId = async function (req, res) {
     try {
         const bookId = req.params.bookId
         if (!validation.isValidObjectId(bookId)) {
@@ -175,7 +175,7 @@ const deleteBooksbyId = async function (req, res) {
 
 
 
-module.exports = { createReview, updateReview, deleteBooksbyId }
+module.exports = { createReview, updateReview, deleteReviewsbyId }
 
 
 
