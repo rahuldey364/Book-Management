@@ -18,7 +18,7 @@ let createBook = async function (req, res) {
         //  -------------------------------VALIDATION BEGINS--------------------------------------------------------------------------------------------------------------------------------       
 
         if (!validation.isValidRequestBody(requiredBody)) {
-            return res.send({ status: false, msg: "please provide  details" })
+            return res.send({ status: false, msg: "please provide  details" })   // recent edit
         }
 
         let { title, excerpt, userId, ISBN, category, subcategory, isDeleted, reviews, releasedAt } = req.body   // destructuring method 
