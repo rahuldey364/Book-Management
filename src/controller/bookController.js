@@ -195,7 +195,6 @@ const getBookById = async function (req, res) {
 const updateBooks = async function (req, res) {
     try {
         let bookId = req.params.bookId
-        if (!bookId) return res.status(400).send({ status: false, message: "BookId is required in params" })
         if (!validation.isValidObjectId(bookId)) {
             return res.status(404).send({
                 status: false,
@@ -222,7 +221,7 @@ const updateBooks = async function (req, res) {
        }
    }
 
-        let updateBooks = await booksModel.findOneAndUpdate({ _id: bookId }, {
+        let updateBooks = await booksModel.findOneAndUpdate({ _id: bookId , isDeleted : false }, {
             $set: {
                 title: data.title,
                 excerpt: data.excerpt,
@@ -232,8 +231,8 @@ const updateBooks = async function (req, res) {
             }
         }, { new: true}).select({deletedAt:0,__v:0}) // upsert = update and insert (optional in this case)
 
-        if (updateBooks == null) {       //
-            return res.status(404).send({ status: false, msg: "Invalid Request" })
+        if (updateBooks == null) {       
+            return res.status(404).send({ status: false, msg: "This book is not available"})
         }
         res.status(200).send({ status: true, data: updateBooks })
         
