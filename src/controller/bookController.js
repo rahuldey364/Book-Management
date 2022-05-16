@@ -225,7 +225,7 @@ const updateBooks = async function (req, res) {
             let uniqueISBN = await booksModel.findOne({ ISBN: data.ISBN })                                                          // ISBN uniqueness
             if (uniqueISBN) return res.status(400).send({ status: false, msg: " ISBN already exists" })
         }
-      
+
         let check = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
         if (data.releasedAt) {
             if (!check.test(data.releasedAt)) {
@@ -234,20 +234,20 @@ const updateBooks = async function (req, res) {
                     .send({ status: false, msg: " date must be in yyyy-mm-dd" });
             }
         }
-        
-       let updateBooks = await booksModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, {
+
+        let updateBooks = await booksModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, {
             $set: {
                 title: data.title,
                 excerpt: data.excerpt,
                 releasedAt: data.releasedAt,
                 ISBN: data.ISBN
             }
-        }, { new: true }).select({ deletedAt: 0, __v: 0 }) 
+        }, { new: true }).select({ deletedAt: 0, __v: 0 })
         if (updateBooks == null) {
             return res.status(404).send({ status: false, msg: "This book is not available" })
         }
         res.status(200).send({ status: true, data: updateBooks })
-        }
+    }
     catch (err) {
         console.log(err)
         res.status(500).send({ status: false, msg: "error", err: err.message })

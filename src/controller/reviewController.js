@@ -93,17 +93,19 @@ const updateReview = async function (req, res) {
         }
         let data = req.body
         if (!validation.isValidRequestBody(data)) {
-            return res.status(400).send({ status: false, msg: "please provide  details" })
+            return res.status(400).send({ status: false, message: "please provide  details" })
         }
         if (!validation.isValid(data.review)) {
-            return res.status(400).send({ status: false, msg: "review is not Valid" })
+            return res.status(400).send({ status: false, message: "review is not Valid" })
         }
-        if (!validation.isValidNumber(data.rating)) {
-            return res.status(400).send({ status: false, msg: " rating should be number" });
+    
+        if (!(data.rating >= 1 && data.rating <= 5)) {
+            return res.status(400).send({ status: false, message: "Rating should be inbetween 1-5 " })
         }
         if (!validation.isValid(data.reviewedBy)) {
-            return res.status(400).send({ status: false, msg: "Name is not Valid" })
+            return res.status(400).send({ status: false, message: "Name is not Valid" })
         }
+
 
        let check = await booksModel.findOne({ _id: bookId, isDeleted: false }).select({ deletedAt: 0, __v: 0, ISBN: 0 }).lean();     //With the Mongoose lean() method, the documents are returned as plain objects.
         if (!check)
@@ -139,14 +141,14 @@ const deleteBooksbyId = async function (req, res) {
         if (!validation.isValidObjectId(bookId)) {
             return res.status(400).send({
                 status: false,
-                msg: "not a valid userId"
+                message: "not a valid bookId"
             })
         }
         const reviewId = req.params.reviewId
         if (!validation.isValidObjectId(reviewId)) {
             return res.status(400).send({
                 status: false,
-                msg: "not a valid userId"
+                message: "not a valid userId"
             })
         }
         let updateReview = await reviewModel.findOneAndUpdate({ _id: reviewId, bookId: bookId, isDeleted: false }, {
