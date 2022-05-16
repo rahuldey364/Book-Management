@@ -5,10 +5,6 @@ const jwt = require("jsonwebtoken")
 
 
 
-
-
-
-
 let createUser = async function (req, res) {
   try {
 
@@ -47,7 +43,7 @@ let createUser = async function (req, res) {
 
     let pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/
     if (!pattern.test(password)) {
-      return res.status(400).send({ status: false, message: "Valid password is required" })
+      return res.status(400).send({ status: false, message: "Valid password is required, atleast {oneLowerCase, oneUpperCase, oneSpecialCharacter and oneNumber},and minimum 8 word and maximum 15 word" })
     }
 
     let pattern1 = /^(\+91[\-\s]?)?[0]?(91)?[6-9]\d{9}$/
@@ -105,7 +101,7 @@ const userLogIn = async function (req, res) {
   }
   else {  
     let token = jwt.sign({ userId: checkData._id }, "function1Up", { expiresIn: '1000s' });
-    // res.setHeader("x-api-key", token);
+    res.setHeader("x-api-key", token);
     res.status(200).send({status: true, data: "logged in successfully", token:  token })
   }
 }
