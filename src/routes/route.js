@@ -11,7 +11,7 @@ router.post("/register", UserController.createUser)
 
 router.post("/login", UserController.userLogIn)
 
-router.post("/books", BookController.createBook)
+router.post("/books", Middleware.authentication, Middleware.authorization,BookController.createBook)
 
 router.get("/books", Middleware.authentication, BookController.getBooks)
 
@@ -25,7 +25,7 @@ router.post("/books/:bookId/review", ReivewController.createReview)
 
 router.put("/books/:bookId/review/:reviewId", ReivewController.updateReview)
 
-router.delete("/books/:bookId/review/:reviewId", ReivewController.deleteBooksbyId)
+router.delete("/books/:bookId/review/:reviewId",ReivewController.deleteReviewsbyId)
 
 
 

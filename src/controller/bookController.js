@@ -2,9 +2,10 @@ const booksModel = require("../models/booksModel")
 const userModel = require("../models/userModel")
 const reviewModel = require("../models/reviewModel")
 const validation = require("../validation/validation")
-const mongoose = require("mongoose")
-const moment = require("moment")
-const jwt = require("jsonwebtoken")
+// const mongoose = require("mongoose")
+// const moment = require("moment")
+
+// const jwt = require("jsonwebtoken")
 
 
 
@@ -41,6 +42,13 @@ let createBook = async function (req, res) {
             return res.status(400).send({
                 status: false,
                 message: "valid userId is required"
+            })
+        }
+        let decodedToken= req.decodedToken
+        if(userId!=decodedToken.userId){
+            return res.status(400).send({
+                status: false,
+                message: "you cannot create book with any others userid"
             })
         }
 
@@ -81,14 +89,15 @@ let createBook = async function (req, res) {
         }
 
 
-        let check = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
-        if (releasedAt) {
-            if (!check.test(releasedAt)) {
-                return res
-                    .status(400)
-                    .send({ status: false, msg: " date must be in yyyy-mm-dd" });
-            }
-        }
+          let check = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
+          if (releasedAt) {
+              if (!check.test(releasedAt)) {
+                  // need to solve this later
+                  return res
+                      .status(409)
+                      .send({ status: false, msg: " date must be in yyyy-mm-dd" });
+              }
+          }
         // -------------------------------------validation Ends-------------------------------------------------------------------------------------------------------------------------------          
 
         let userData = await booksModel.create(req.body)
@@ -163,7 +172,7 @@ const getBookById = async function (req, res) {
         if (!isValidBook) {
             return res.status(404).send({
                 status: false,
-                message: "Document not found  "
+                message: "Document not found"
             });
         }
         const getReviews = await reviewModel.find({ bookId: bookId, isDeleted: false }).select({ __v: 0 })

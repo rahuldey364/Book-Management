@@ -102,9 +102,9 @@ const updateReview = async function (req, res) {
         if (!(data.rating >= 1 && data.rating <= 5)) {
             return res.status(400).send({ status: false, message: "Rating should be inbetween 1-5 " })
         }
-        if (!validation.isValid(data.reviewedBy)) {
-            return res.status(400).send({ status: false, message: "Name is not Valid" })
-        }
+       if(data.reviewedBy){ if (!validation.isValid(data.reviewedBy)) {
+            return res.status(400).send({ status: false, msg: "Name is not Valid" })
+        }}
 
 
        let check = await booksModel.findOne({ _id: bookId, isDeleted: false }).select({ deletedAt: 0, __v: 0, ISBN: 0 }).lean();     //With the Mongoose lean() method, the documents are returned as plain objects.
@@ -135,7 +135,7 @@ const updateReview = async function (req, res) {
 // Delete the related reivew.
 // Update the books document - decrease review count by one
 
-const deleteBooksbyId = async function (req, res) {
+const deleteReviewsbyId = async function (req, res) {
     try {
         const bookId = req.params.bookId
         if (!validation.isValidObjectId(bookId)) {
@@ -176,7 +176,7 @@ const deleteBooksbyId = async function (req, res) {
 
 
 
-module.exports = { createReview, updateReview, deleteBooksbyId }
+module.exports = { createReview, updateReview, deleteReviewsbyId }
 
 
 
