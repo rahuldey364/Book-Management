@@ -11,7 +11,7 @@ router.post("/register", UserController.createUser)
 
 router.post("/login", UserController.userLogIn)
 
-router.post("/books", Middleware.authentication, Middleware.authorization,BookController.createBook)
+router.post("/books", Middleware.authentication,BookController.createBook)
 
 router.get("/books", Middleware.authentication, BookController.getBooks)
 
