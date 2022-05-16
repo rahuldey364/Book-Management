@@ -102,10 +102,11 @@ const updateReview = async function (req, res) {
         if (!(data.rating >= 1 && data.rating <= 5)) {
             return res.status(400).send({ status: false, message: "Rating should be inbetween 1-5 " })
         }
-       if(data.reviewedBy){ if (!validation.isValid(data.reviewedBy)) {
+       
+        if(data.reviewedBy){ if (!validation.isValidString(data.reviewedBy)) {
             return res.status(400).send({ status: false, msg: "Name is not Valid" })
         }}
-
+    
 
        let check = await booksModel.findOne({ _id: bookId, isDeleted: false }).select({ deletedAt: 0, __v: 0, ISBN: 0 }).lean();     //With the Mongoose lean() method, the documents are returned as plain objects.
         if (!check)
